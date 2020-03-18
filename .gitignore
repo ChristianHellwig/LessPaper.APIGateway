@@ -2,6 +2,8 @@
 *
 
 ## Add Specific files
+!.github/workflows/dotnetcore.yml
+
 !src/LessPaper.APIGateway/Controllers/WeatherForecastController.cs
 !src/LessPaper.APIGateway/LessPaper.APIGateway.csproj
 !src/LessPaper.APIGateway/Program.cs
