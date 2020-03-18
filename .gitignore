@@ -2,6 +2,16 @@
 *
 
 ## Add Specific files
+!src/LessPaper.APIGateway/Controllers/WeatherForecastController.cs
+!src/LessPaper.APIGateway/LessPaper.APIGateway.csproj
+!src/LessPaper.APIGateway/Program.cs
+!src/LessPaper.APIGateway/Properties/launchSettings.json
+!src/LessPaper.APIGateway/Startup.cs
+!src/LessPaper.APIGateway/WeatherForecast.cs
+!src/LessPaper.APIGateway/appsettings.Development.json
+!src/LessPaper.APIGateway/appsettings.json
+!src/LessPaper.sln
+
 
 # root folder
 !.gitignore
