@@ -1,5 +1,6 @@
 ## Ignore all files and folders
 *
+!/**/
 
 ## Add Specific files
 !.github/workflows/dotnetcore.yml
@@ -13,7 +14,7 @@
 !src/LessPaper.APIGateway/appsettings.Development.json
 !src/LessPaper.APIGateway/appsettings.json
 !src/LessPaper.sln
-
+!src/resharper.DotSettings
 
 # root folder
 !.gitignore
