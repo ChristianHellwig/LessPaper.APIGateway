@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -43,6 +45,12 @@ namespace LessPaper.APIGateway.Helper
             var guid = Guid.NewGuid();
             return guid.ToString();
         }
+
+        //public static string GenerateJwt(IEnumerable<Claim> claims)
+        //{
+
+        //}
+
 
     }
 }

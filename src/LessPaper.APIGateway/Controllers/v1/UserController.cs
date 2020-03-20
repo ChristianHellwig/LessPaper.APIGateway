@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LessPaper.APIGateway.Helper;
+using LessPaper.APIGateway.Interfaces.External.GuardApi;
 using LessPaper.APIGateway.Interfaces.External.ReadApi;
 using LessPaper.APIGateway.Interfaces.External.WriteApi;
 using LessPaper.APIGateway.Models;
@@ -19,14 +20,12 @@ namespace LessPaper.APIGateway.Controllers.v1
     public class UserController : ControllerBase
     {
         private readonly IOptions<AppSettings> config;
-        private readonly IReadApi readApi;
-        private readonly IWriteApi writeApi;
+        private readonly IGuardApi guardApi;
 
-        public UserController(IOptions<AppSettings> config, IReadApi readApi, IWriteApi writeApi)
+        public UserController(IOptions<AppSettings> config, IGuardApi guardApi)
         {
             this.config = config;
-            this.readApi = readApi;
-            this.writeApi = writeApi;
+            this.guardApi = guardApi;
         }
 
 
@@ -51,12 +50,12 @@ namespace LessPaper.APIGateway.Controllers.v1
             var hashedPassword = CryptoHelper.Sha256FromString(registrationRequest.Password, salt);
             var userId = CryptoHelper.GetGuid();
             
-            // Call write api to add user
-            var result = await writeApi.AddUser(emailAddress,  hashedPassword, salt, userId);
-
-
-
-            return Ok(result);
+            // Call api to register a new user
+            var registrationSuccessful = await guardApi.RegisterUser(emailAddress,  hashedPassword, salt, userId);
+            if (!registrationSuccessful)
+                return BadRequest();
+            
+            return Ok();
         }
 
         [HttpPost]
@@ -74,11 +73,19 @@ namespace LessPaper.APIGateway.Controllers.v1
             {
                 return BadRequest();
             }
-
             
+            // Receive user data
+            var userData = await guardApi.GetUserLoginInformation(loginRequest.Email);
+            if (userData == null)
+                return BadRequest();
 
+            // Recalculate the password and compare with given password hash
+            var hashedPassword = CryptoHelper.Sha256FromString(loginRequest.Password, userData.Salt);
+            if (hashedPassword != userData.PasswordHash)
+                return BadRequest();
+            
+            // Todo generate token
 
-            await Task.Delay(10); //Add async business logic
             return Ok();
         }
 

@@ -3,37 +3,19 @@
 !.github/workflows/dotnetcore.yml
 !/**/
 
-## Add Specific files
-!src/LessPaper.sln
-!src/LessPaper.APIGateway/
-!src/LessPaper.APIGateway/Controllers/
-!src/LessPaper.APIGateway/Controllers/v1/
-!src/LessPaper.APIGateway/appsettings.Development.json
-!src/LessPaper.APIGateway/appsettings.json
-!src/LessPaper.APIGateway/LessPaper.APIGateway.csproj
-!src/LessPaper.APIGateway/LessPaper.APIGateway.csproj.user
-!src/LessPaper.APIGateway/Program.cs
-!src/LessPaper.APIGateway/ServiceInstaller.cs
-!src/LessPaper.APIGateway/Startup.cs
-!src/LessPaper.APIGateway/Controllers/v1/FilesController.cs
-!src/LessPaper.APIGateway/Controllers/v1/UserController.cs
-!src/LessPaper.APIGateway/Helper/CryptoHelper.cs
-!src/LessPaper.APIGateway/Helper/ValidationHelper.cs
-!src/LessPaper.APIGateway/Interfaces/External/ReadApi/IReadApi.cs
-!src/LessPaper.APIGateway/Interfaces/External/WriteApi/IWriteApi.cs
-!src/LessPaper.APIGateway/Models/UserAuthenticationResult.cs
-!src/LessPaper.APIGateway/Models/UserLoginRequest.cs
-!src/LessPaper.APIGateway/Models/UserRegistrationRequest.cs
-!src/LessPaper.APIGateway/Options/AppSettings.cs
-!src/LessPaper.APIGateway/Properties/launchSettings.json
-!src/LessPaper.APIGateway.Test/LessPaper.APIGateway.UnitTest.csproj
-!src/LessPaper.APIGateway.Test/UnitTest1.cs
-!src/LessPaper.APIGateway.Test/Controller/BaseController.cs
-!src/LessPaper.APIGateway.Test/Controller/UserControllerTest.cs
-!src/LessPaper.APIGateway.Test/Helper/CryptoHelperTest.cs
-!src/LessPaper.APIGateway.Test/Helper/ValidationHelperTest.cs
-
 # root folder
 !.gitignore
 !LICENSE
 !README.md
+/**/Debug
+/**/Release
+
+## Add specific files
+!src/LessPaper.sln
+!src/LessPaper.APIGateway/LessPaper.APIGateway.csproj
+!src/LessPaper.APIGateway.Test/LessPaper.APIGateway.UnitTest.csproj
+!src/**/*.cs
+
+!src/LessPaper.APIGateway/Properties/launchSettings.json
+!src/LessPaper.APIGateway/appsettings.Development.json
+!src/LessPaper.APIGateway/appsettings.json
