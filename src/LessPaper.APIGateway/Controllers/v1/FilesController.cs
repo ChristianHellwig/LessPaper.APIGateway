@@ -210,8 +210,7 @@ namespace LessPaper.APIGateway.Controllers.v1
                 return BadRequest();
             }
 
-            await Task.Delay(1);
-            return Ok();
+            return BadRequest();
         }
 
         /// <summary>
