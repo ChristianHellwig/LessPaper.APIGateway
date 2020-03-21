@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using LessPaper.Shared.Interfaces.General;
 using LessPaper.Shared.Interfaces.ReadApi.ObjectApi;
 
 namespace LessPaper.APIGateway.Models.Response

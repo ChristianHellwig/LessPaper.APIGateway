@@ -11,7 +11,7 @@ using LessPaper.Shared.Interfaces.GuardApi;
 using LessPaper.Shared.Interfaces.ReadApi;
 using LessPaper.Shared.Interfaces.ReadApi.ObjectApi;
 using LessPaper.Shared.Interfaces.WriteApi;
-using LessPaper.Shared.Interfaces.WriteApi.FileApi;
+using LessPaper.Shared.Interfaces.WriteApi.ObjectApi;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -53,8 +53,8 @@ namespace LessPaper.APIGateway.UnitTest.Controller
             // Mock apis
             var readApiMock = new Mock<IReadApi>();
             var writeApiMock = new Mock<IWriteApi>();
-            writeApiMock.Setup(mock =>
-                mock.FileApi.UploadFile(It.IsAny<Stream>(),
+            writeApiMock.Setup(mock => 
+                mock.ObjectApi.UploadFile(It.IsAny<Stream>(),
                     It.IsAny<string>(),
                     It.IsAny<string>(),
                     It.IsAny<string>())
@@ -88,7 +88,7 @@ namespace LessPaper.APIGateway.UnitTest.Controller
             var readApiMock = new Mock<IReadApi>();
             var writeApiMock = new Mock<IWriteApi>();
             writeApiMock.Setup(mock =>
-                mock.FileApi.UploadFile(
+                mock.ObjectApi.UploadFile(
                     It.IsAny<string>(),
                     It.IsAny<Stream>(),
                     It.IsAny<string>(),
@@ -117,7 +117,7 @@ namespace LessPaper.APIGateway.UnitTest.Controller
             var readApiMock = new Mock<IReadApi>();
             var writeApiMock = new Mock<IWriteApi>();
             writeApiMock.Setup(mock =>
-                mock.FileApi.UploadFile(It.IsAny<Stream>(),
+                mock.ObjectApi.UploadFile(It.IsAny<Stream>(),
                     It.IsAny<string>(),
                     It.IsAny<string>(),
                     It.IsAny<string>())
@@ -137,7 +137,7 @@ namespace LessPaper.APIGateway.UnitTest.Controller
             var readApiMock = new Mock<IReadApi>();
             var writeApiMock = new Mock<IWriteApi>();
             writeApiMock.Setup(mock =>
-                mock.FileApi.UploadFile(
+                mock.ObjectApi.UploadFile(
                     It.IsAny<string>(),
                     It.IsAny<Stream>(),
                     It.IsAny<string>(),
@@ -197,7 +197,7 @@ namespace LessPaper.APIGateway.UnitTest.Controller
 
 
             // Setup dummy response
-            var fileMetadataResponse = new Mock<IFileMetadata>();
+            var fileMetadataResponse = new Mock<IObjectMetadata>();
             fileMetadataResponse.SetupGet(x => x.ObjectId).Returns("MyFileId");
             fileMetadataResponse.SetupGet(x => x.SizeInByte).Returns((uint)myFile.Length);
             fileMetadataResponse.SetupGet(x => x.ObjectName).Returns(request.Name);

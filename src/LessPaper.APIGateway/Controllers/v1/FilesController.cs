@@ -1,19 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Threading.Tasks;
-using LessPaper.APIGateway.Models;
 using LessPaper.APIGateway.Models.Request;
 using LessPaper.APIGateway.Models.Response;
 using LessPaper.APIGateway.Options;
+using LessPaper.Shared.Interfaces.General;
 using LessPaper.Shared.Interfaces.ReadApi;
-using LessPaper.Shared.Interfaces.ReadApi.ObjectApi;
 using LessPaper.Shared.Interfaces.WriteApi;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace LessPaper.APIGateway.Controllers.v1
@@ -46,7 +40,8 @@ namespace LessPaper.APIGateway.Controllers.v1
         {
             try
             {
-                var uploadMetadata = await writeApi.FileApi.UploadFile(
+                writeApi.ObjectApi.
+                var uploadMetadata = await writeApi.ObjectApi.UploadFile(
                     fileData.File.OpenReadStream(),
                     fileData.PlaintextKey,
                     fileData.EncryptedKey,
