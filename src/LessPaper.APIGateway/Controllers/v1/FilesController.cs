@@ -1,13 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
-using LessPaper.APIGateway.Interfaces.External.GuardApi;
-using LessPaper.APIGateway.Interfaces.External.ReadApi;
-using LessPaper.APIGateway.Interfaces.External.WriteApi;
 using LessPaper.APIGateway.Models;
+using LessPaper.APIGateway.Models.Response;
 using LessPaper.APIGateway.Options;
+using LessPaper.Shared.Interfaces.ReadApi;
+using LessPaper.Shared.Interfaces.ReadApi.ObjectApi;
+using LessPaper.Shared.Interfaces.WriteApi;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace LessPaper.APIGateway.Controllers.v1
@@ -26,7 +31,7 @@ namespace LessPaper.APIGateway.Controllers.v1
             this.writeApi = writeApi;
             this.readApi = readApi;
         }
-        
+
 
         /// <summary>
         /// Upload a file to an unknown location
@@ -38,8 +43,22 @@ namespace LessPaper.APIGateway.Controllers.v1
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UploadFileToUnknownLocation([FromForm] UploadFileRequest fileData)
         {
-            await Task.Delay(1);
-            return Ok();
+            try
+            {
+                var uploadMetadata = await writeApi.FileApi.UploadFile(
+                    fileData.File.OpenReadStream(),
+                    fileData.PlaintextKey,
+                    fileData.EncryptedKey,
+                    fileData.DocumentLanguage);
+
+                var responseObject = new UploadFileResponse(uploadMetadata);
+                return Ok(responseObject);
+            }
+            catch (Exception e)
+            {
+                Console.Write(e);
+                return BadRequest();
+            }
         }
 
         /// <summary>
@@ -53,12 +72,26 @@ namespace LessPaper.APIGateway.Controllers.v1
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UploadFileToKnownLocation(
-            [FromForm] UploadFileRequest fileData, 
-            [FromRoute] string directoryId, 
+            [FromForm] UploadFileRequest fileData,
+            [FromRoute] string directoryId,
             [FromQuery(Name = "revisionNr")] uint? revisionNumber)
         {
-            await Task.Delay(1);
-            return Ok();
+            try
+            {
+                var uploadMetadata = await writeApi.FileApi.UploadFile(
+                    fileData.File.OpenReadStream(),
+                    fileData.PlaintextKey,
+                    fileData.EncryptedKey,
+                    fileData.DocumentLanguage);
+
+                var responseObject = new UploadFileResponse(uploadMetadata);
+                return Ok(responseObject);
+            }
+            catch (Exception e)
+            {
+                Console.Write(e);
+                return BadRequest();
+            }
         }
 
         /// <summary>
@@ -74,8 +107,20 @@ namespace LessPaper.APIGateway.Controllers.v1
             [FromRoute] string objectId,
             [FromQuery(Name = "revisionNr")] uint? revisionNumber)
         {
-            await Task.Delay(1);
-            return Ok();
+            try
+            {
+                var stream = await readApi.ObjectApi.GetObject(objectId, revisionNumber);
+
+                if (stream == null)
+                    return BadRequest();
+
+                return File(stream, "application/octet-stream");
+            }
+            catch (Exception e)
+            {
+                Console.Write(e);
+                return BadRequest();
+            }
         }
 
         /// <summary>
@@ -91,8 +136,21 @@ namespace LessPaper.APIGateway.Controllers.v1
             [FromRoute] string objectId,
             [FromQuery(Name = "revisionNr")] uint? revisionNumber)
         {
-            await Task.Delay(1);
-            return Ok();
+            try
+            {
+                var metadata = await readApi.ObjectApi.GetMetadata(objectId, revisionNumber);
+                return metadata switch
+                {
+                    IFileMetadata fileMetadata => (IActionResult)Ok(new FileMetadataResponse(fileMetadata)),
+                    IDirectoryMetadata directoryMetadata => Ok(new DirectoryMetadataResponse(directoryMetadata)),
+                    _ => BadRequest()
+                };
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return BadRequest();
+            }
         }
 
         /// <summary>
@@ -110,8 +168,19 @@ namespace LessPaper.APIGateway.Controllers.v1
             [FromRoute] string objectId,
             [FromQuery(Name = "revisionNr")] uint? revisionNumber)
         {
-            await Task.Delay(1);
-            return Ok();
+            try
+            {
+                var updated = await writeApi.FileApi.UpdateMetadata(objectId, updatedMetadata);
+                if (updated)
+                    return Ok();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return BadRequest();
+            }
+            
+            return BadRequest();
         }
 
         /// <summary>
@@ -127,6 +196,18 @@ namespace LessPaper.APIGateway.Controllers.v1
             [FromRoute] string objectId,
             [FromQuery(Name = "revisionNr")] uint? revisionNumber)
         {
+            try
+            {
+                var deleted = await writeApi.FileApi.DeleteObject(objectId);
+                if (deleted)
+                    return Ok();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return BadRequest();
+            }
+
             await Task.Delay(1);
             return Ok();
         }
@@ -144,13 +225,21 @@ namespace LessPaper.APIGateway.Controllers.v1
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> SearchObject(
-            [FromRoute] string? directoryId,
+            [FromRoute] string directoryId,
             [FromQuery(Name = "searchQuery")] string searchQuery,
             [FromQuery(Name = "count")] uint? count,
             [FromQuery(Name = "page")] uint? page)
         {
-            await Task.Delay(1);
-            return Ok();
+            try
+            {
+                var searchResults = await readApi.ObjectApi.Search(directoryId, searchQuery, count ?? 10, page ?? 0);
+                return Ok(new SearchResponse(searchResults));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return BadRequest();
+            }
         }
     }
 }

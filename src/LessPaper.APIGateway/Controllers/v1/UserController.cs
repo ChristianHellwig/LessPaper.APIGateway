@@ -4,11 +4,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using LessPaper.APIGateway.Helper;
-using LessPaper.APIGateway.Interfaces.External.GuardApi;
-using LessPaper.APIGateway.Interfaces.External.ReadApi;
-using LessPaper.APIGateway.Interfaces.External.WriteApi;
 using LessPaper.APIGateway.Models;
 using LessPaper.APIGateway.Options;
+using LessPaper.Shared.Interfaces.GuardApi;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -52,7 +50,7 @@ namespace LessPaper.APIGateway.Controllers.v1
             var userId = CryptoHelper.GetGuid();
             
             // Call api to register a new user
-            var registrationSuccessful = await guardApi.RegisterUser(emailAddress,  hashedPassword, salt, userId);
+            var registrationSuccessful = await guardApi.RegisterNewUser(emailAddress,  hashedPassword, salt, userId);
             if (!registrationSuccessful)
                 return BadRequest();
             
@@ -76,7 +74,7 @@ namespace LessPaper.APIGateway.Controllers.v1
             }
             
             // Receive user data
-            var userData = await guardApi.GetUserLoginInformation(loginRequest.Email);
+            var userData = await guardApi.GetUserCredentials(loginRequest.Email);
             if (userData == null)
                 return BadRequest();
 
@@ -99,6 +97,7 @@ namespace LessPaper.APIGateway.Controllers.v1
         {
             var newAuthToken = new AuthToken();
 
+            
             // Todo implement token refresh
             await Task.Delay(10);
             

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using LessPaper.APIGateway.Controllers.v1;
-using LessPaper.APIGateway.Interfaces.External.GuardApi;
-using LessPaper.APIGateway.Interfaces.External.ReadApi;
-using LessPaper.APIGateway.Interfaces.External.WriteApi;
 using LessPaper.APIGateway.Models;
+using LessPaper.Shared.Interfaces.GuardApi;
 using Xunit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +18,7 @@ namespace LessPaper.APIGateway.UnitTest.Controller
         {
             var writeApiMock = new Mock<IGuardApi>();
             writeApiMock.Setup(mock =>
-                    mock.RegisterUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                    mock.RegisterNewUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                         .ReturnsAsync(true);
           
             controller = new UserController(AppSettings, writeApiMock.Object);
