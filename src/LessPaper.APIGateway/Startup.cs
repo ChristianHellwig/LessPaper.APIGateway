@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using LessPaper.APIGateway.Models;
@@ -17,6 +18,7 @@ using Microsoft.Extensions.Logging;
 
 namespace LessPaper.APIGateway
 {
+    [ExcludeFromCodeCoverage]
     public class Startup
     {
         public Startup(IConfiguration configuration)

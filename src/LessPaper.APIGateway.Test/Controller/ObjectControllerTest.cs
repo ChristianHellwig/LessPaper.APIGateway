@@ -481,6 +481,58 @@ namespace LessPaper.APIGateway.UnitTest.Controller
             Assert.IsType<BadRequestResult>(response);
         }
 
+        [Fact]
+        public async void Search_Ok()
+        {
+            // Setup dummy response
+            var searchResponseMock = new Mock<ISearchResponse>();
+            searchResponseMock.SetupGet(x => x.SearchQuery).Returns("My search");
+            searchResponseMock.SetupGet(x => x.Directories).Returns(new IMinimalDirectoryMetadata[0]);
+            searchResponseMock.SetupGet(x => x.Files).Returns(new IFileMetadata[0]);
+
+
+            // Mock apis
+            var writeApiMock = new Mock<IWriteApi>();
+            var readApiMock = new Mock<IReadApi>();
+            readApiMock.Setup(mock =>
+                mock.ObjectApi.Search(
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<uint>(),
+                    It.IsAny<uint>())
+            ).ReturnsAsync(searchResponseMock.Object);
+
+            var controller = new ObjectController(AppSettings, writeApiMock.Object, readApiMock.Object);
+
+            var response = await controller.SearchObject("MyDirId", "My search", 10, 4);
+            var searchResponseObject = Assert.IsType<OkObjectResult>(response);
+            var searchResponse = Assert.IsType<SearchResponse>(searchResponseObject.Value);
+
+            Assert.Equal(searchResponseMock.Object.Directories, searchResponse.Directories);
+            Assert.Equal(searchResponseMock.Object.Files, searchResponse.Files);
+            Assert.Equal(searchResponseMock.Object.SearchQuery, searchResponse.SearchQuery);
+        }
+
+        [Fact]
+        public async void Search_Throws()
+        {
+            // Mock apis
+            var writeApiMock = new Mock<IWriteApi>();
+            var readApiMock = new Mock<IReadApi>();
+            readApiMock.Setup(mock =>
+                mock.ObjectApi.Search(
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<uint>(),
+                    It.IsAny<uint>())
+            ).Throws<InvalidOperationException>();
+
+            var controller = new ObjectController(AppSettings, writeApiMock.Object, readApiMock.Object);
+            var response = await controller.SearchObject("MyDirId", "My search", 10, 4);
+
+            Assert.IsType<BadRequestResult>(response);
+        }
+
         public static byte[] Stream2Array(Stream input)
         {
             using var ms = new MemoryStream();

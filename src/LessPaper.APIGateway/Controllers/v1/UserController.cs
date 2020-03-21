@@ -28,33 +28,43 @@ namespace LessPaper.APIGateway.Controllers.v1
             this.guardApi = guardApi;
         }
 
+        private bool IsValidEmailAndPassword(string email, string password)
+        {
+            return !string.IsNullOrEmpty(password) && 
+                   !string.IsNullOrEmpty(email) && 
+                   password.Length >= config.Value.ValidationRules.MinimumPasswordLength && 
+                   ValidationHelper.IsValidEmailAddress(email);
+        }
 
         [HttpPost]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Register([FromBody] UserRegistrationRequest registrationRequest) 
+        public async Task<IActionResult> Register([FromBody] UserRegistrationRequest registrationRequest)
         {
             // Validate user input
-            if (string.IsNullOrEmpty(registrationRequest.Password) || 
-                string.IsNullOrEmpty(registrationRequest.Email) ||
-                registrationRequest.Password.Length < config.Value.ValidationRules.MinimumPasswordLength ||
-                !ValidationHelper.IsValidEmailAddress(registrationRequest.Email))
-            {
+            if (!IsValidEmailAndPassword(registrationRequest.Email, registrationRequest.Password))
                 return BadRequest();
-            }
 
             // Generate user entry
             var emailAddress = registrationRequest.Email;
             var salt = CryptoHelper.GetSalt(10);
             var hashedPassword = CryptoHelper.Sha256FromString(registrationRequest.Password, salt);
             var userId = CryptoHelper.GetGuid();
-            
+
             // Call api to register a new user
-            var registrationSuccessful = await guardApi.RegisterNewUser(emailAddress,  hashedPassword, salt, userId);
-            if (!registrationSuccessful)
+            try
+            {
+                var registrationSuccessful = await guardApi.RegisterNewUser(emailAddress, hashedPassword, salt, userId);
+                if (!registrationSuccessful)
+                    return BadRequest();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
                 return BadRequest();
-            
+            }
+
             return Ok();
         }
 
@@ -66,27 +76,31 @@ namespace LessPaper.APIGateway.Controllers.v1
         public async Task<IActionResult> Login([FromBody] UserLoginRequest loginRequest)
         {
             // Validate user input
-            if (string.IsNullOrEmpty(loginRequest.Password) ||
-                string.IsNullOrEmpty(loginRequest.Email) ||
-                loginRequest.Password.Length < config.Value.ValidationRules.MinimumPasswordLength ||
-                !ValidationHelper.IsValidEmailAddress(loginRequest.Email))
+            if (!IsValidEmailAndPassword(loginRequest.Email, loginRequest.Password))
+                return BadRequest();
+
+            try
             {
+                // Receive user data
+                var userData = await guardApi.GetUserCredentials(loginRequest.Email);
+                if (userData == null)
+                    return BadRequest();
+
+                // Recalculate the password and compare with given password hash
+                var hashedPassword = CryptoHelper.Sha256FromString(loginRequest.Password, userData.Salt);
+                if (hashedPassword != userData.PasswordHash)
+                    return BadRequest();
+
+                // Todo generate token
+
+                return Ok();
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
                 return BadRequest();
             }
-            
-            // Receive user data
-            var userData = await guardApi.GetUserCredentials(loginRequest.Email);
-            if (userData == null)
-                return BadRequest();
-
-            // Recalculate the password and compare with given password hash
-            var hashedPassword = CryptoHelper.Sha256FromString(loginRequest.Password, userData.Salt);
-            if (hashedPassword != userData.PasswordHash)
-                return BadRequest();
-            
-            // Todo generate token
-
-            return Ok();
         }
 
         [HttpPost]
@@ -98,10 +112,10 @@ namespace LessPaper.APIGateway.Controllers.v1
         {
             var newAuthToken = new AuthToken();
 
-            
+
             // Todo implement token refresh
-            await Task.Delay(10);
-            
+            await Task.Delay(1);
+
             return Ok(newAuthToken);
         }
 
@@ -111,7 +125,7 @@ namespace LessPaper.APIGateway.Controllers.v1
         public async Task<IActionResult> UserInfo()
         {
             //Todo implement request for user information
-            await Task.Delay(10);
+            await Task.Delay(1);
             return Ok();
         }
     }
