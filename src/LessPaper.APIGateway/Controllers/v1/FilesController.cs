@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using LessPaper.APIGateway.Models;
+using LessPaper.APIGateway.Models.Request;
 using LessPaper.APIGateway.Models.Response;
 using LessPaper.APIGateway.Options;
 using LessPaper.Shared.Interfaces.ReadApi;
@@ -79,6 +80,7 @@ namespace LessPaper.APIGateway.Controllers.v1
             try
             {
                 var uploadMetadata = await writeApi.FileApi.UploadFile(
+                    directoryId,
                     fileData.File.OpenReadStream(),
                     fileData.PlaintextKey,
                     fileData.EncryptedKey,

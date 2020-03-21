@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using LessPaper.APIGateway.Controllers.v1;
 using LessPaper.APIGateway.Models;
+using LessPaper.APIGateway.Models.Request;
 using LessPaper.Shared.Interfaces.GuardApi;
 using Xunit;
 using Microsoft.AspNetCore.Http;
@@ -18,8 +19,13 @@ namespace LessPaper.APIGateway.UnitTest.Controller
         {
             var writeApiMock = new Mock<IGuardApi>();
             writeApiMock.Setup(mock =>
-                    mock.RegisterNewUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                        .ReturnsAsync(true);
+                    mock.RegisterNewUser(
+                        It.IsAny<string>(),
+                        It.IsAny<string>(), 
+                        It.IsAny<string>(), 
+                        It.IsAny<string>())
+                    )
+                .ReturnsAsync(true);
           
             controller = new UserController(AppSettings, writeApiMock.Object);
         }
@@ -52,7 +58,9 @@ namespace LessPaper.APIGateway.UnitTest.Controller
                 Password = "my_secure_password"
             });
             Assert.IsType<OkResult>(validRequestObj);
-
         }
+
+
+
     }
 }

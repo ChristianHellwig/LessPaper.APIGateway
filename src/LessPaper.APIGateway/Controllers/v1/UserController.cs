@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using LessPaper.APIGateway.Helper;
 using LessPaper.APIGateway.Models;
+using LessPaper.APIGateway.Models.Request;
 using LessPaper.APIGateway.Options;
 using LessPaper.Shared.Interfaces.GuardApi;
 using Microsoft.AspNetCore.Authorization;
