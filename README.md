@@ -1,4 +1,7 @@
 # LessPaper
+## Status
+![.NET Core](https://github.com/ChristianHellwig/LessPaper.APIGateway/workflows/.NET%20Core/badge.svg)
+
 
 ## Git naming conventions
 ### Branch naming conventions
