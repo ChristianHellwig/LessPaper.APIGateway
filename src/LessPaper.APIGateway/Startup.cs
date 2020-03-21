@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LessPaper.APIGateway.Models;
 using LessPaper.APIGateway.Options;
+using LessPaper.Shared.Interfaces.ReadApi;
+using LessPaper.Shared.Interfaces.WriteApi;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,6 +31,10 @@ namespace LessPaper.APIGateway
         {
             services.AddOptions();
             services.Configure<AppSettings>(Configuration.GetSection("CustomSettings"));
+
+            services.AddScoped<IReadApi, ReadApi>();
+            services.AddScoped<IWriteApi, WriteApi>();
+
             services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
         }
         

@@ -27,7 +27,7 @@ namespace LessPaper.APIGateway.Models.Request
         [ModelBinder(Name = "document_language")]
         public string DocumentLanguage { get; set; }
 
-        [Required]
+        //[Required]
         [JsonPropertyName("file")]
         [ModelBinder(Name = "file")]
         public IFormFile File { get; set; }

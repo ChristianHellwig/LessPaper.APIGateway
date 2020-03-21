@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using LessPaper.Shared.Interfaces.WriteApi.ObjectApi;
+using LessPaper.Shared.Interfaces.WriteApi.WriteObjectApi;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LessPaper.APIGateway.Models.Request

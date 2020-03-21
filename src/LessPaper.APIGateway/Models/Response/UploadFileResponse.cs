@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using LessPaper.Shared.Interfaces.General;
-using LessPaper.Shared.Interfaces.WriteApi.ObjectApi;
+using LessPaper.Shared.Interfaces.WriteApi.WriteObjectApi;
 
 namespace LessPaper.APIGateway.Models.Response
 {

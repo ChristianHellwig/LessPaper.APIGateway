@@ -12,15 +12,15 @@ using Microsoft.Extensions.Options;
 
 namespace LessPaper.APIGateway.Controllers.v1
 {
-    [Route("v1/files")]
+    [Route("v1/objects")]
     [ApiController]
-    public class FilesController : ControllerBase
+    public class ObjectController : ControllerBase
     {
         private IOptions<AppSettings> config;
         private readonly IWriteApi writeApi;
         private readonly IReadApi readApi;
 
-        public FilesController(IOptions<AppSettings> config, IWriteApi writeApi, IReadApi readApi)
+        public ObjectController(IOptions<AppSettings> config, IWriteApi writeApi, IReadApi readApi)
         {
             this.config = config;
             this.writeApi = writeApi;
@@ -33,6 +33,7 @@ namespace LessPaper.APIGateway.Controllers.v1
         /// </summary>
         /// <param name="fileData">Form-data</param>
         /// <returns></returns>
+        [Route("/files")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -40,7 +41,6 @@ namespace LessPaper.APIGateway.Controllers.v1
         {
             try
             {
-                writeApi.ObjectApi.
                 var uploadMetadata = await writeApi.ObjectApi.UploadFile(
                     fileData.File.OpenReadStream(),
                     fileData.PlaintextKey,
@@ -64,6 +64,7 @@ namespace LessPaper.APIGateway.Controllers.v1
         /// <param name="directoryId">Target directory id</param>
         /// <param name="revisionNumber">Revision number of the file. Null if the latest version is meant</param>
         /// <returns></returns>
+        [Route("/files")]
         [HttpPost("{directoryId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -74,7 +75,7 @@ namespace LessPaper.APIGateway.Controllers.v1
         {
             try
             {
-                var uploadMetadata = await writeApi.FileApi.UploadFile(
+                var uploadMetadata = await writeApi.ObjectApi.UploadFile(
                     directoryId,
                     fileData.File.OpenReadStream(),
                     fileData.PlaintextKey,
@@ -87,6 +88,31 @@ namespace LessPaper.APIGateway.Controllers.v1
             catch (Exception e)
             {
                 Console.Write(e);
+                return BadRequest();
+            }
+        }
+
+        [Route("/directories")]
+        [HttpPost("{directoryId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CreateDirectory(
+            [FromRoute] string directoryId,
+            [FromBody] CreateDirectoryRequest createDirectoryRequest
+        )
+        {
+            try
+            {
+                var createDirectoryMetadata = await writeApi.ObjectApi.CreateDirectory(
+                        directoryId,
+                        createDirectoryRequest.SubDirectoryName);
+
+                var responseObject = new DirectoryMetadataResponse(createDirectoryMetadata);
+                return Ok(responseObject);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
                 return BadRequest();
             }
         }
@@ -161,13 +187,13 @@ namespace LessPaper.APIGateway.Controllers.v1
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateObjectMetadata(
-            [FromForm] UpdateFileMetaDataRequest updatedMetadata,
+            [FromBody] UpdateFileMetaDataRequest updatedMetadata,
             [FromRoute] string objectId,
             [FromQuery(Name = "revisionNr")] uint? revisionNumber)
         {
             try
             {
-                var updated = await writeApi.FileApi.UpdateMetadata(objectId, updatedMetadata);
+                var updated = await writeApi.ObjectApi.UpdateMetadata(objectId, updatedMetadata);
                 if (updated)
                     return Ok();
             }
@@ -176,7 +202,7 @@ namespace LessPaper.APIGateway.Controllers.v1
                 Console.WriteLine(e);
                 return BadRequest();
             }
-            
+
             return BadRequest();
         }
 
@@ -195,7 +221,7 @@ namespace LessPaper.APIGateway.Controllers.v1
         {
             try
             {
-                var deleted = await writeApi.FileApi.DeleteObject(objectId);
+                var deleted = await writeApi.ObjectApi.DeleteObject(objectId);
                 if (deleted)
                     return Ok();
             }
