@@ -5,20 +5,20 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace LessPaper.APIGateway.Models
 {
-    public class UserLoginRequest
+    public class AuthToken
     {
         [Required]
-        [JsonPropertyName("email")]
-        [ModelBinder(Name = "email")]
-        public string Email { get; set; }
+        [JsonPropertyName("token")]
+        [ModelBinder(Name = "token")]
+        public string Token { get; set; }
 
         [Required]
-        [JsonPropertyName("password")]
-        [ModelBinder(Name = "password")]
-        public string Password { get; set; }
+        [JsonPropertyName("refresh_token")]
+        [ModelBinder(Name = "refresh_token")]
+        public string RefreshToken { get; set; }
+
     }
 }

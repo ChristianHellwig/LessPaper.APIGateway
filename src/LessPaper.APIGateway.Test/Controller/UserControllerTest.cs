@@ -21,7 +21,7 @@ namespace LessPaper.APIGateway.UnitTest.Controller
             var writeApiMock = new Mock<IGuardApi>();
             writeApiMock.Setup(mock =>
                     mock.RegisterUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                .ReturnsAsync(true);
+                        .ReturnsAsync(true);
           
             controller = new UserController(AppSettings, writeApiMock.Object);
         }
@@ -29,33 +29,31 @@ namespace LessPaper.APIGateway.UnitTest.Controller
         [Fact]
         public async Task Register()
         {
-            ////Invalid email
-            //var badEmailRequestObj = await controller.Register(new UserRegistrationRequest
-            //{
-            //    Email = "a@",
-            //    Password = "my_secure_password"
-            //});
-            //Assert.IsType<BadRequestResult>(badEmailRequestObj);
+            //Invalid email
+            var badEmailRequestObj = await controller.Register(new UserRegistrationRequest
+            {
+                Email = "a@",
+                Password = "my_secure_password"
+            });
+            Assert.IsType<BadRequestResult>(badEmailRequestObj);
 
 
-            ////Invalid password
-            //var badPasswordRequestObj = await controller.Register(new UserRegistrationRequest
-            //{
-            //    Email = "a@b.de",
-            //    Password = "1"
-            //});
-            //Assert.IsType<BadRequestResult>(badPasswordRequestObj);
+            //Invalid password
+            var badPasswordRequestObj = await controller.Register(new UserRegistrationRequest
+            {
+                Email = "a@b.de",
+                Password = "1"
+            });
+            Assert.IsType<BadRequestResult>(badPasswordRequestObj);
 
 
-            ////Valid request
-            //var validRequestObj = await controller.Register(new UserRegistrationRequest
-            //{
-            //    Email = "a@b.de",
-            //    Password = "my_secure_password"
-            //});
-            //var validRequest = Assert.IsType<OkObjectResult>(validRequestObj);
-            //var validResponseValue = Assert.IsType<bool>(validRequest.Value);
-
+            //Valid request
+            var validRequestObj = await controller.Register(new UserRegistrationRequest
+            {
+                Email = "a@b.de",
+                Password = "my_secure_password"
+            });
+            Assert.IsType<OkResult>(validRequestObj);
 
         }
     }

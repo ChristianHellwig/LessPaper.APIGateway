@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using LessPaper.APIGateway.Helper;
 using LessPaper.APIGateway.Interfaces.External.GuardApi;
@@ -15,7 +16,7 @@ using Microsoft.Extensions.Options;
 
 namespace LessPaper.APIGateway.Controllers.v1
 {
-    [Route("v1/[controller]")]
+    [Route("v1/user")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -89,14 +90,29 @@ namespace LessPaper.APIGateway.Controllers.v1
             return Ok();
         }
 
-        public void RefreshToken()
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("/refresh")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> RefreshToken([FromBody] AuthToken oldAuthToken)
         {
+            var newAuthToken = new AuthToken();
 
+            // Todo implement token refresh
+            await Task.Delay(10);
+            
+            return Ok(newAuthToken);
         }
 
-        public void UserInfo()
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UserInfo()
         {
-
+            //Todo implement request for user information
+            await Task.Delay(10);
+            return Ok();
         }
     }
 }

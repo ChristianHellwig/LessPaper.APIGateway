@@ -15,7 +15,18 @@ namespace LessPaper.APIGateway.Helper
         /// <returns>True if the address is valid</returns>
         public static bool IsValidEmailAddress(string email)
         {
-            return !string.IsNullOrWhiteSpace(email) && new EmailAddressAttribute().IsValid(email);
+            if (string.IsNullOrWhiteSpace(email) || !new EmailAddressAttribute().IsValid(email))
+                return false;
+
+            try
+            {
+                var mailAddress = new System.Net.Mail.MailAddress(email);
+                return mailAddress.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
     }
