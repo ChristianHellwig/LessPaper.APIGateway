@@ -14,6 +14,7 @@ namespace LessPaper.APIGateway.Models.Response
         public DirectoryMetadataResponse(IDirectoryMetadata directoryMetadata) : base(directoryMetadata)
         {
             FileChilds = directoryMetadata.FileChilds.Select(x => new FileMetadataResponse(x)).ToArray();
+            DirectoryChilds = directoryMetadata.DirectoryChilds.Select(x => new MinimalDirectoryMetadataResponse(x)).ToArray();
         }
 
         /// <inheritdoc />

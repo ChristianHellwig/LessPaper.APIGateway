@@ -73,7 +73,7 @@ namespace LessPaper.APIGateway.UnitTest.Controller
             Assert.Equal(uploadResponse.Object.ObjectName, metadataResponse.ObjectName);
             Assert.Equal(uploadResponse.Object.SizeInByte, metadataResponse.SizeInByte);
         }
-        
+
         [Fact]
         public async void UploadFileToKnownLocation_Ok()
         {
@@ -97,7 +97,7 @@ namespace LessPaper.APIGateway.UnitTest.Controller
             ).ReturnsAsync(uploadResponse.Object);
 
             var controller = new FilesController(AppSettings, writeApiMock.Object, readApiMock.Object);
-            
+
             // Query controller
             var response = await controller.UploadFileToKnownLocation(request, "myDirectoryId", 4);
             var metadataResponseObject = Assert.IsType<OkObjectResult>(response);
@@ -150,7 +150,7 @@ namespace LessPaper.APIGateway.UnitTest.Controller
             var response = await controller.UploadFileToKnownLocation(request, "myDirectoryId", 4);
             Assert.IsType<BadRequestResult>(response);
         }
-        
+
         [Fact]
         public async void GetObject_Ok()
         {
@@ -169,7 +169,7 @@ namespace LessPaper.APIGateway.UnitTest.Controller
             var metadataResponseObject = Assert.IsType<FileStreamResult>(response);
             Assert.Equal(myFile, Stream2Array(metadataResponseObject.FileStream));
         }
-        
+
         [Fact]
         public async void GetObject_Throws()
         {
@@ -178,26 +178,42 @@ namespace LessPaper.APIGateway.UnitTest.Controller
             var writeApiMock = new Mock<IWriteApi>();
             readApiMock.Setup(mock =>
                 mock.ObjectApi.GetObject(
-                    It.IsAny<string>(), 
+                    It.IsAny<string>(),
                     It.IsAny<uint>())
             ).Throws<InvalidOperationException>();
 
             var controller = new FilesController(AppSettings, writeApiMock.Object, readApiMock.Object);
 
-            var response = await controller.GetObject("MyObjId",  4);
+            var response = await controller.GetObject("MyObjId", 4);
             Assert.IsType<BadRequestResult>(response);
         }
 
+        [Fact]
         public async void GetObjectMetadata_Ok()
         {
+            // Setup dummy tag
             var tagMock = new Mock<ITag>();
             tagMock.SetupGet(x => x.Value).Returns("MyTag1");
             tagMock.SetupGet(x => x.Relevance).Returns(0.8f);
             tagMock.SetupGet(x => x.Source).Returns(TagSource.User);
 
+            // Setup dummy response
+            var fileMetadataMock = new Mock<IFileMetadata>();
+            fileMetadataMock.SetupGet(x => x.ObjectId).Returns("MyFileId");
+            fileMetadataMock.SetupGet(x => x.SizeInByte).Returns((uint)myFile.Length);
+            fileMetadataMock.SetupGet(x => x.ObjectName).Returns(request.Name);
+            fileMetadataMock.SetupGet(x => x.EncryptionKey).Returns("MyEncryptionKey");
+            fileMetadataMock.SetupGet(x => x.Extension).Returns(ExtensionType.Pdf);
+            fileMetadataMock.SetupGet(x => x.Hash).Returns("MyFileHash");
+            fileMetadataMock.SetupGet(x => x.ParentDirectoryIds).Returns(new[] { "MyDirectoryId" });
+            fileMetadataMock.SetupGet(x => x.RevisionNumber).Returns(0);
+            fileMetadataMock.SetupGet(x => x.Revisions).Returns(new[] { 0u });
+            fileMetadataMock.SetupGet(x => x.Tags).Returns(new[] { tagMock.Object });
+            fileMetadataMock.SetupGet(x => x.ThumbnailId).Returns("MyThumbnailId");
+            fileMetadataMock.SetupGet(x => x.UploadDate).Returns(DateTime.MinValue);
 
             // Setup dummy response
-            var fileMetadataResponse = new Mock<IObjectMetadata>();
+            var fileMetadataResponse = new Mock<IFileMetadata>();
             fileMetadataResponse.SetupGet(x => x.ObjectId).Returns("MyFileId");
             fileMetadataResponse.SetupGet(x => x.SizeInByte).Returns((uint)myFile.Length);
             fileMetadataResponse.SetupGet(x => x.ObjectName).Returns(request.Name);
@@ -211,31 +227,49 @@ namespace LessPaper.APIGateway.UnitTest.Controller
             fileMetadataResponse.SetupGet(x => x.ThumbnailId).Returns("MyThumbnailId");
             fileMetadataResponse.SetupGet(x => x.UploadDate).Returns(DateTime.MinValue);
 
-            //// Setup dummy response
-            //var directoryMetadataResponse = new Mock<IDirectoryMetadata>();
-            //directoryMetadataResponse.SetupGet(x => x.ObjectId).Returns("MyDirectoryId");
-            //directoryMetadataResponse.SetupGet(x => x.SizeInByte).Returns((uint)myFile.Length);
-            //directoryMetadataResponse.SetupGet(x => x.ObjectName).Returns(request.Name);
-            //directoryMetadataResponse.SetupGet(x => x.FileChilds).Returns(request.Name);
+            var controller = new FilesController(AppSettings, writeApiMock.Object, readApiMock.Object);
 
+            var updatedMetadata = new UpdateFileMetaDataRequest()
+            {
+                ObjectName = "NewFilename",
+                ParentDirectoryIds = new[] { "Dir1", "Dir2" }
+            };
 
-            //// Mock apis
-            //var writeApiMock = new Mock<IWriteApi>();
-            //var readApiMock = new Mock<IReadApi>();
-            //readApiMock.Setup(mock =>
-            //    mock.ObjectApi.GetMetadata(
-            //        It.IsAny<string>(),
-            //        It.IsAny<uint?>())
-            //).ReturnsAsync();
+            var response = await controller.UpdateObjectMetadata(updatedMetadata, "ObjId", 4);
+            Assert.IsType<BadRequestResult>(response);
+        }
+        
+        [Fact]
+        public async void DeleteObject_Ok()
+        {
+            // Mock apis
+            var writeApiMock = new Mock<IWriteApi>();
+            var readApiMock = new Mock<IReadApi>();
+            writeApiMock.Setup(mock =>
+                mock.FileApi.DeleteObject(It.IsAny<string>())
+            ).ReturnsAsync(true);
 
-            //var controller = new FilesController(AppSettings, writeApiMock.Object, readApiMock.Object);
-
-            //var response = await controller.GetObject("MyObjId", 4);
-            //var metadataResponseObject = Assert.IsType<FileStreamResult>(response);
-            //Assert.Equal(myFile, Stream2Array(metadataResponseObject.FileStream));
-
+            var controller = new FilesController(AppSettings, writeApiMock.Object, readApiMock.Object);
+            
+            var response = await controller.DeleteObject( "ObjId", 4);
+            Assert.IsType<OkResult>(response);
         }
 
+        [Fact]
+        public async void DeleteObject_Throw()
+        {
+            // Mock apis
+            var writeApiMock = new Mock<IWriteApi>();
+            var readApiMock = new Mock<IReadApi>();
+            writeApiMock.Setup(mock =>
+                mock.FileApi.DeleteObject(It.IsAny<string>())
+               ).Throws<InvalidOperationException>();
+
+            var controller = new FilesController(AppSettings, writeApiMock.Object, readApiMock.Object);
+
+            var response = await controller.DeleteObject("ObjId", 4);
+            Assert.IsType<BadRequestResult>(response);
+        }
 
         public static byte[] Stream2Array(Stream input)
         {
@@ -243,6 +277,6 @@ namespace LessPaper.APIGateway.UnitTest.Controller
             input.CopyTo(ms);
             return ms.ToArray();
         }
-        
+
     }
 }

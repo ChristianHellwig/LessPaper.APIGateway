@@ -14,7 +14,7 @@ namespace LessPaper.APIGateway.Models.Response
         public MinimalDirectoryMetadataResponse(IMinimalDirectoryMetadata minimalDirectoryMetadata) : base(minimalDirectoryMetadata)
         {
             NumberOfChilds = minimalDirectoryMetadata.NumberOfChilds;
-            LatestChangeDate = minimalDirectoryMetadata.LatestViewDate;
+            LatestChangeDate = minimalDirectoryMetadata.LatestChangeDate;
             LatestViewDate = minimalDirectoryMetadata.LatestViewDate;
         }
 
