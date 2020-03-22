@@ -1,22 +1,21 @@
 ## Ignore all files and folders
 *
-!/**/
-
-## Add Specific files
 !.github/workflows/dotnetcore.yml
-
-!src/LessPaper.APIGateway/Controllers/WeatherForecastController.cs
-!src/LessPaper.APIGateway/LessPaper.APIGateway.csproj
-!src/LessPaper.APIGateway/Program.cs
-!src/LessPaper.APIGateway/Properties/launchSettings.json
-!src/LessPaper.APIGateway/Startup.cs
-!src/LessPaper.APIGateway/WeatherForecast.cs
-!src/LessPaper.APIGateway/appsettings.Development.json
-!src/LessPaper.APIGateway/appsettings.json
-!src/LessPaper.sln
-!src/resharper.DotSettings
+!/**/
 
 # root folder
 !.gitignore
 !LICENSE
 !README.md
+/**/Debug
+/**/Release
+
+## Add specific files
+!src/LessPaper.sln
+!src/LessPaper.APIGateway/LessPaper.APIGateway.csproj
+!src/LessPaper.APIGateway.Test/LessPaper.APIGateway.UnitTest.csproj
+!src/**/*.cs
+
+!src/LessPaper.APIGateway/Properties/launchSettings.json
+!src/LessPaper.APIGateway/appsettings.Development.json
+!src/LessPaper.APIGateway/appsettings.json
