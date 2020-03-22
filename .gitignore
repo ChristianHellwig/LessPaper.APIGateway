@@ -1,6 +1,7 @@
 ## Ignore all files and folders
 *
 !.github/workflows/dotnetcore.yml
+!.github/workflows/dotnetcore_pull_request.yml
 !/**/
 
 # root folder
