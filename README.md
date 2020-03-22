@@ -2,7 +2,7 @@
 
 ## Status
 
-![.NET Core](https://github.com/ChristianHellwig/LessPaper.APIGateway/workflows/.NET%20Core/badge.svg)
+![.NET Core](https://github.com/LessPaperWork/LessPaper.APIGateway/workflows/.NET%20Core/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/LessPaperWork/LessPaper.APIGateway/badge.svg?branch=master)](https://coveralls.io/github/LessPaperWork/LessPaper.APIGateway?branch=master)
 
 ## Git naming conventions
