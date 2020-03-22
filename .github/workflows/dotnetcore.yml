@@ -2,22 +2,22 @@ name: .NET Core
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core for building
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.101
-    - name: Build with dotnet
-      run: dotnet build --configuration Release
-      
+      - uses: actions/checkout@v2
+      - name: Setup .NET Core for building
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.101
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
+
   test:
     runs-on: ubuntu-latest
     needs: build
@@ -28,6 +28,11 @@ jobs:
         with:
           dotnet-version: 3.1.101
       - name: Run test
-        run: dotnet test
-    
-    
+        run: |
+          cd ./LessPaper.APIGateway.UnitTest
+          dotnet test /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
+      - name: Publish coverage report to coveralls.io
+        uses: coverallsapp/github-action@v1.0.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: ./LessPaper.Shared.UnitTest/TestResults/coverage.info
