@@ -13,7 +13,7 @@
 ## Add specific files
 !LessPaper.APIGateway.sln
 !LessPaper.APIGateway/LessPaper.APIGateway.csproj
-!LessPaper.APIGateway.Test/LessPaper.APIGateway.UnitTest.csproj
+!LessPaper.APIGateway.UnitTest/LessPaper.APIGateway.UnitTest.csproj
 !/**/*.cs
 
 !LessPaper.APIGateway/Properties/launchSettings.json
