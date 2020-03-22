@@ -11,11 +11,11 @@
 /**/Release
 
 ## Add specific files
-!src/LessPaper.sln
-!src/LessPaper.APIGateway/LessPaper.APIGateway.csproj
-!src/LessPaper.APIGateway.Test/LessPaper.APIGateway.UnitTest.csproj
-!src/**/*.cs
+!LessPaper.APIGateway.sln
+!LessPaper.APIGateway/LessPaper.APIGateway.csproj
+!LessPaper.APIGateway.Test/LessPaper.APIGateway.UnitTest.csproj
+!/**/*.cs
 
-!src/LessPaper.APIGateway/Properties/launchSettings.json
-!src/LessPaper.APIGateway/appsettings.Development.json
-!src/LessPaper.APIGateway/appsettings.json
+!LessPaper.APIGateway/Properties/launchSettings.json
+!LessPaper.APIGateway/appsettings.Development.json
+!LessPaper.APIGateway/appsettings.json

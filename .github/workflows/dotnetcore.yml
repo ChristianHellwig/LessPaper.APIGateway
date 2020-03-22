@@ -16,7 +16,7 @@ jobs:
       with:
         dotnet-version: 3.1.101
     - name: Build with dotnet
-      run: dotnet build src --configuration Release
+      run: dotnet build --configuration Release
       
   test:
     runs-on: ubuntu-latest
@@ -28,6 +28,6 @@ jobs:
         with:
           dotnet-version: 3.1.101
       - name: Run test
-        run: dotnet test src
+        run: dotnet test
     
     
