@@ -4,6 +4,7 @@ using LessPaper.APIGateway.Controllers.v1;
 using LessPaper.APIGateway.Helper;
 using LessPaper.APIGateway.Models;
 using LessPaper.APIGateway.Models.Request;
+using LessPaper.Shared.Helper;
 using LessPaper.Shared.Interfaces.GuardApi;
 using LessPaper.Shared.Interfaces.GuardApi.Response;
 using Xunit;
