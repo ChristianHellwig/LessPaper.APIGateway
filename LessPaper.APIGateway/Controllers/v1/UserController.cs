@@ -7,6 +7,8 @@ using LessPaper.APIGateway.Helper;
 using LessPaper.APIGateway.Models;
 using LessPaper.APIGateway.Models.Request;
 using LessPaper.APIGateway.Options;
+using LessPaper.Shared.Enums;
+using LessPaper.Shared.Helper;
 using LessPaper.Shared.Interfaces.GuardApi;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -50,7 +52,9 @@ namespace LessPaper.APIGateway.Controllers.v1
             var emailAddress = registrationRequest.Email;
             var salt = CryptoHelper.GetSalt(10);
             var hashedPassword = CryptoHelper.Sha256FromString(registrationRequest.Password, salt);
-            var userId = CryptoHelper.GetGuid();
+
+            //TODO Add user type
+            var userId = IdGenerator.NewId(IdType.Undefined);
 
             // Call api to register a new user
             try

@@ -37,43 +37,10 @@ namespace LessPaper.APIGateway.UnitTest.Controller
                 EncryptedKey = "MyEncryptedKey",
                 File = file,
                 Name = "MyDoc.pdf",
-                DocumentLanguage = "DE"
+                DocumentLanguage = DocumentLanguage.English
             };
         }
 
-        [Fact]
-        public async void UploadFileToUnknownLocation_Ok()
-        {
-            // Setup dummy response
-            var uploadResponse = new Mock<IUploadMetadata>();
-            uploadResponse.SetupGet(x => x.ObjectId).Returns("MyId");
-            uploadResponse.SetupGet(x => x.SizeInByte).Returns((uint)myFile.Length);
-            uploadResponse.SetupGet(x => x.QuickNumber).Returns(1);
-            uploadResponse.SetupGet(x => x.ObjectName).Returns(request.Name);
-
-            // Mock apis
-            var readApiMock = new Mock<IReadApi>();
-            var writeApiMock = new Mock<IWriteApi>();
-            writeApiMock.Setup(mock =>
-                mock.ObjectApi.UploadFile(It.IsAny<Stream>(),
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    It.IsAny<string>())
-            ).ReturnsAsync(uploadResponse.Object);
-
-            var controller = new ObjectController(AppSettings, writeApiMock.Object, readApiMock.Object);
-
-            // Query controller
-            var response = await controller.UploadFileToUnknownLocation(request);
-            var metadataResponseObject = Assert.IsType<OkObjectResult>(response);
-            var metadataResponse = Assert.IsType<UploadFileResponse>(metadataResponseObject.Value);
-
-            // Compare values
-            Assert.Equal(uploadResponse.Object.ObjectId, metadataResponse.ObjectId);
-            Assert.Equal(uploadResponse.Object.QuickNumber, metadataResponse.QuickNumber);
-            Assert.Equal(uploadResponse.Object.ObjectName, metadataResponse.ObjectName);
-            Assert.Equal(uploadResponse.Object.SizeInByte, metadataResponse.SizeInByte);
-        }
 
         [Fact]
         public async void UploadFileToKnownLocation_Ok()
@@ -81,7 +48,7 @@ namespace LessPaper.APIGateway.UnitTest.Controller
             // Setup dummy response
             var uploadResponse = new Mock<IUploadMetadata>();
             uploadResponse.SetupGet(x => x.ObjectId).Returns("MyId");
-            uploadResponse.SetupGet(x => x.SizeInByte).Returns((uint)myFile.Length);
+            uploadResponse.SetupGet(x => x.SizeInBytes).Returns((uint)myFile.Length);
             uploadResponse.SetupGet(x => x.QuickNumber).Returns(1);
             uploadResponse.SetupGet(x => x.ObjectName).Returns(request.Name);
 
@@ -94,7 +61,8 @@ namespace LessPaper.APIGateway.UnitTest.Controller
                     It.IsAny<Stream>(),
                     It.IsAny<string>(),
                     It.IsAny<string>(),
-                    It.IsAny<string>())
+                    It.IsAny<DocumentLanguage>(), 
+                    It.IsAny<ExtensionType>())
             ).ReturnsAsync(uploadResponse.Object);
 
             var controller = new ObjectController(AppSettings, writeApiMock.Object, readApiMock.Object);
@@ -108,28 +76,9 @@ namespace LessPaper.APIGateway.UnitTest.Controller
             Assert.Equal(uploadResponse.Object.ObjectId, metadataResponse.ObjectId);
             Assert.Equal(uploadResponse.Object.QuickNumber, metadataResponse.QuickNumber);
             Assert.Equal(uploadResponse.Object.ObjectName, metadataResponse.ObjectName);
-            Assert.Equal(uploadResponse.Object.SizeInByte, metadataResponse.SizeInByte);
+            Assert.Equal(uploadResponse.Object.SizeInBytes, metadataResponse.SizeInBytes);
         }
 
-        [Fact]
-        public async void UploadFileToUnknownLocation_Throws()
-        {
-            // Mock apis
-            var readApiMock = new Mock<IReadApi>();
-            var writeApiMock = new Mock<IWriteApi>();
-            writeApiMock.Setup(mock =>
-                mock.ObjectApi.UploadFile(It.IsAny<Stream>(),
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    It.IsAny<string>())
-            ).Throws<InvalidOperationException>();
-
-            var controller = new ObjectController(AppSettings, writeApiMock.Object, readApiMock.Object);
-
-            // Query controller
-            var response = await controller.UploadFileToUnknownLocation(request);
-            Assert.IsType<BadRequestResult>(response);
-        }
 
         [Fact]
         public async void UploadFileToKnownLocation_Throws()
@@ -143,7 +92,8 @@ namespace LessPaper.APIGateway.UnitTest.Controller
                     It.IsAny<Stream>(),
                     It.IsAny<string>(),
                     It.IsAny<string>(),
-                    It.IsAny<string>())
+                    It.IsAny<DocumentLanguage>(),
+                    It.IsAny<ExtensionType>())
             ).Throws<InvalidOperationException>();
 
             var controller = new ObjectController(AppSettings, writeApiMock.Object, readApiMock.Object);
@@ -162,7 +112,7 @@ namespace LessPaper.APIGateway.UnitTest.Controller
             // Setup dummy response
             var directoryMetadataMock = new Mock<IDirectoryMetadata>();
             directoryMetadataMock.SetupGet(x => x.ObjectId).Returns("MyDirectoryId");
-            directoryMetadataMock.SetupGet(x => x.SizeInByte).Returns((uint)myFile.Length);
+            directoryMetadataMock.SetupGet(x => x.SizeInBytes).Returns((uint)myFile.Length);
             directoryMetadataMock.SetupGet(x => x.ObjectName).Returns("MyDirectory");
             directoryMetadataMock.SetupGet(x => x.FileChilds).Returns(new IFileMetadata[0]);
             directoryMetadataMock.SetupGet(x => x.DirectoryChilds).Returns(new IMinimalDirectoryMetadata[0]);
@@ -187,7 +137,7 @@ namespace LessPaper.APIGateway.UnitTest.Controller
             var responseObject = Assert.IsType<OkObjectResult>(response);
             var directoryMetadata = Assert.IsAssignableFrom<IDirectoryMetadata>(responseObject.Value);
             Assert.Equal(directoryMetadataMockObject.ObjectId,directoryMetadata.ObjectId);
-            Assert.Equal(directoryMetadataMockObject.SizeInByte, directoryMetadata.SizeInByte);
+            Assert.Equal(directoryMetadataMockObject.SizeInBytes, directoryMetadata.SizeInBytes);
             Assert.Equal(directoryMetadataMockObject.ObjectName, directoryMetadata.ObjectName);
             Assert.Equal(directoryMetadataMockObject.FileChilds, directoryMetadata.FileChilds);
             Assert.Equal(directoryMetadataMockObject.DirectoryChilds, directoryMetadata.DirectoryChilds);
@@ -269,7 +219,7 @@ namespace LessPaper.APIGateway.UnitTest.Controller
             // Setup dummy response
             var fileMetadataMock = new Mock<IFileMetadata>();
             fileMetadataMock.SetupGet(x => x.ObjectId).Returns("MyFileId");
-            fileMetadataMock.SetupGet(x => x.SizeInByte).Returns((uint)myFile.Length);
+            fileMetadataMock.SetupGet(x => x.SizeInBytes).Returns((uint)myFile.Length);
             fileMetadataMock.SetupGet(x => x.ObjectName).Returns(request.Name);
             fileMetadataMock.SetupGet(x => x.EncryptionKey).Returns("MyEncryptionKey");
             fileMetadataMock.SetupGet(x => x.Extension).Returns(ExtensionType.Pdf);
@@ -284,7 +234,7 @@ namespace LessPaper.APIGateway.UnitTest.Controller
             // Setup dummy response
             var directoryMetadataMock = new Mock<IDirectoryMetadata>();
             directoryMetadataMock.SetupGet(x => x.ObjectId).Returns("MyDirectoryId");
-            directoryMetadataMock.SetupGet(x => x.SizeInByte).Returns((uint)myFile.Length);
+            directoryMetadataMock.SetupGet(x => x.SizeInBytes).Returns((uint)myFile.Length);
             directoryMetadataMock.SetupGet(x => x.ObjectName).Returns("MyDirectory");
             directoryMetadataMock.SetupGet(x => x.FileChilds).Returns(new[] { fileMetadataMock.Object });
             directoryMetadataMock.SetupGet(x => x.DirectoryChilds).Returns(new IMinimalDirectoryMetadata[0]);
@@ -325,7 +275,7 @@ namespace LessPaper.APIGateway.UnitTest.Controller
             Assert.Equal(fileMetadataMock.Object.EncryptionKey, fileMetadataResponse.EncryptionKey);
             Assert.Equal(fileMetadataMock.Object.ObjectName, fileMetadataResponse.ObjectName);
             Assert.Equal(fileMetadataMock.Object.ObjectId, fileMetadataResponse.ObjectId);
-            Assert.Equal(fileMetadataMock.Object.SizeInByte, fileMetadataResponse.SizeInByte);
+            Assert.Equal(fileMetadataMock.Object.SizeInBytes, fileMetadataResponse.SizeInBytes);
 
 
             readApiMock.Setup(mock =>
@@ -361,7 +311,7 @@ namespace LessPaper.APIGateway.UnitTest.Controller
             Assert.Equal(directoryMetadataMock.Object.FileChilds[0].EncryptionKey, directoryMetadataResponse.FileChilds[0].EncryptionKey);
             Assert.Equal(directoryMetadataMock.Object.FileChilds[0].ObjectName, directoryMetadataResponse.FileChilds[0].ObjectName);
             Assert.Equal(directoryMetadataMock.Object.FileChilds[0].ObjectId, directoryMetadataResponse.FileChilds[0].ObjectId);
-            Assert.Equal(directoryMetadataMock.Object.FileChilds[0].SizeInByte, directoryMetadataResponse.FileChilds[0].SizeInByte);
+            Assert.Equal(directoryMetadataMock.Object.FileChilds[0].SizeInBytes, directoryMetadataResponse.FileChilds[0].SizeInBytes);
 
             Assert.Equal(directoryMetadataMock.Object.ObjectName, directoryMetadataResponse.ObjectName);
             Assert.Equal(directoryMetadataMock.Object.LatestChangeDate, directoryMetadataResponse.LatestChangeDate);
@@ -369,7 +319,7 @@ namespace LessPaper.APIGateway.UnitTest.Controller
             Assert.Equal(directoryMetadataMock.Object.NumberOfChilds, directoryMetadataResponse.NumberOfChilds);
             Assert.Equal(directoryMetadataMock.Object.ObjectId, directoryMetadataResponse.ObjectId);
             Assert.Equal(directoryMetadataMock.Object.ObjectName, directoryMetadataResponse.ObjectName);
-            Assert.Equal(directoryMetadataMock.Object.SizeInByte, directoryMetadataResponse.SizeInByte);
+            Assert.Equal(directoryMetadataMock.Object.SizeInBytes, directoryMetadataResponse.SizeInBytes);
         }
 
         [Fact]
@@ -378,7 +328,7 @@ namespace LessPaper.APIGateway.UnitTest.Controller
             // Setup dummy response
             var directoryMetadataMock = new Mock<IDirectoryMetadata>();
             directoryMetadataMock.SetupGet(x => x.ObjectId).Returns("MyDirectoryId");
-            directoryMetadataMock.SetupGet(x => x.SizeInByte).Returns((uint)myFile.Length);
+            directoryMetadataMock.SetupGet(x => x.SizeInBytes).Returns((uint)myFile.Length);
             directoryMetadataMock.SetupGet(x => x.ObjectName).Returns("MyDirectory");
             directoryMetadataMock.SetupGet(x => x.FileChilds).Returns(new IFileMetadata[0]);
             directoryMetadataMock.SetupGet(x => x.DirectoryChilds).Returns(new IMinimalDirectoryMetadata[0]);

@@ -27,36 +27,7 @@ namespace LessPaper.APIGateway.Controllers.v1
             this.readApi = readApi;
         }
 
-
-        /// <summary>
-        /// Upload a file to an unknown location
-        /// </summary>
-        /// <param name="fileData">Form-data</param>
-        /// <returns></returns>
-        [Route("/files")]
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UploadFileToUnknownLocation([FromForm] UploadFileRequest fileData)
-        {
-            try
-            {
-                var uploadMetadata = await writeApi.ObjectApi.UploadFile(
-                    fileData.File.OpenReadStream(),
-                    fileData.PlaintextKey,
-                    fileData.EncryptedKey,
-                    fileData.DocumentLanguage);
-
-                var responseObject = new UploadFileResponse(uploadMetadata);
-                return Ok(responseObject);
-            }
-            catch (Exception e)
-            {
-                Console.Write(e);
-                return BadRequest();
-            }
-        }
-
+        
         /// <summary>
         /// Upload a file to a specific location
         /// </summary>
@@ -80,7 +51,8 @@ namespace LessPaper.APIGateway.Controllers.v1
                     fileData.File.OpenReadStream(),
                     fileData.PlaintextKey,
                     fileData.EncryptedKey,
-                    fileData.DocumentLanguage);
+                    fileData.DocumentLanguage, 
+                    fileData.FileExtension);
 
                 var responseObject = new UploadFileResponse(uploadMetadata);
                 return Ok(responseObject);
