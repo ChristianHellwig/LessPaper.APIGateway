@@ -5,6 +5,7 @@ using LessPaper.APIGateway.Helper;
 using LessPaper.APIGateway.Models;
 using LessPaper.APIGateway.Models.Request;
 using LessPaper.Shared.Interfaces.GuardApi;
+using LessPaper.Shared.Interfaces.GuardApi.Response;
 using Xunit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

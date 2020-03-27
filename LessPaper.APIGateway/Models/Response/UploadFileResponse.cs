@@ -14,7 +14,7 @@ namespace LessPaper.APIGateway.Models.Response
         {
             ObjectName = uploadMetadata.ObjectName;
             ObjectId = uploadMetadata.ObjectId;
-            SizeInByte = uploadMetadata.SizeInByte;
+            SizeInBytes = uploadMetadata.SizeInBytes;
             QuickNumber = uploadMetadata.QuickNumber;
             LatestChangeDate = uploadMetadata.LatestChangeDate;
             LatestViewDate = uploadMetadata.LatestViewDate;
@@ -30,7 +30,7 @@ namespace LessPaper.APIGateway.Models.Response
 
         /// <inheritdoc />
         [JsonPropertyName("size_in_bytes")]
-        public uint SizeInByte { get; }
+        public uint SizeInBytes { get; }
 
         /// <inheritdoc />
         [JsonPropertyName("latest_change_date")]

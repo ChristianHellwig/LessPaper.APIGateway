@@ -23,6 +23,7 @@ namespace LessPaper.APIGateway.Models.Response
             Revisions = fileMetadata.Revisions;
             ParentDirectoryIds = fileMetadata.ParentDirectoryIds;
             Tags = fileMetadata.Tags.Select(x => new Tag(x)).ToArray();
+            Language = fileMetadata.Language;
         }
 
         /// <inheritdoc />
@@ -64,6 +65,10 @@ namespace LessPaper.APIGateway.Models.Response
         /// <inheritdoc />
         [JsonPropertyName("tags")]
         public ITag[] Tags { get; }
+
+        /// <inheritdoc />
+        [JsonPropertyName("language")]
+        public DocumentLanguage Language { get; }
     }
 
     public class Tag : ITag
