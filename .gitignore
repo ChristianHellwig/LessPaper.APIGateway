@@ -23,6 +23,8 @@
 
 !LessPaper.APIGateway/Dockerfile
 !LessPaper.APIGateway/docker-compose.yml
+!LessPaper.APIGateway/Minio_mc/Dockerfile
+!LessPaper.APIGateway/Minio_mc/endpoint.sh
 
 !LessPaper.APIGateway/TestCertificates/private.key
 !LessPaper.APIGateway/TestCertificates/public.crt
