@@ -20,3 +20,10 @@
 !LessPaper.APIGateway/Properties/launchSettings.json
 !LessPaper.APIGateway/appsettings.Development.json
 !LessPaper.APIGateway/appsettings.json
+
+!LessPaper.APIGateway/Dockerfile
+!LessPaper.APIGateway/docker-compose.yml
+
+!LessPaper.APIGateway/TestCertificates/private.key
+!LessPaper.APIGateway/TestCertificates/public.crt
+!LessPaper.APIGateway/TestCertificates/public.pem

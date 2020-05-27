@@ -6,6 +6,7 @@ using LessPaper.APIGateway.Options;
 using LessPaper.Shared.Interfaces.General;
 using LessPaper.Shared.Interfaces.ReadApi;
 using LessPaper.Shared.Interfaces.WriteApi;
+using LessPaper.Shared.Interfaces.WriteApi.WriteObjectApi;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -46,7 +47,7 @@ namespace LessPaper.APIGateway.Controllers.v1
         {
             try
             {
-                var uploadMetadata = await writeApi.ObjectApi.UploadFile(
+                IUploadMetadata uploadMetadata = await writeApi.ObjectApi.UploadFile(
                     directoryId,
                     fileData.File.OpenReadStream(),
                     fileData.PlaintextKey,
